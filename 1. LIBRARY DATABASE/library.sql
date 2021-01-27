@@ -11,210 +11,183 @@
 -----------------------------------------------------------------------------------------------------------------------------
 -- CREATE STATEMENTS --
 
---Create Table PUBLISHER with Primary Key as NAME
+-- Creating book table
+create table book(
+Book_id int primary key,
+title varchar(30),
+publisher_name varchar(30),
+pub_year year);
 
-CREATE TABLE PUBLISHER
-(NAME VARCHAR(20) PRIMARY KEY,
-PHONE INTEGER,
-ADDRESS VARCHAR(20));
+-- Creating publisher table
+create table publisher(
+name varchar(20) primary key,
+address varchar(30),
+phone bigint);
 
-DESC PUBLISHER;
+-- Adding foreign key to book table
+alter table book add foreign key (publisher_name) references publisher(name) on delete cascade;
 
---Create Table BOOK with Primary Key as BOOK_ID and Foreign Key PUB_NAME referring the PUBLISHER table
+desc book;
+desc publisher;
 
-CREATE TABLE BOOK
-(BOOK_ID INTEGER PRIMARY KEY,
-TITLE VARCHAR(20),
-PUB_YEAR VARCHAR(20),
-PUB_NAME VARCHAR(20),
-FOREIGN KEY (PUB_NAME) REFERENCES PUBLISHER(NAME) ON DELETE CASCADE);
+-- Creating book_author table
+create table book_author(
+book_id int primary key,
+author_name varchar(20),
+foreign key(book_id)references book(Book_id)on delete cascade);
+desc book_author;
 
-DESC BOOK;
+-- Creating library_programme table
+create table library_programme(
+programme_id int primary key,
+programme_name varchar(20),
+address varchar(20));
+desc library_programme;
 
---Create Table BOOK_AUTHORS with Primary Key as BOOK_ID and AUTHOR_NAME and Foreign Key BOOK_ID referring the BOOK table
+-- Creating book_copies table
+create table book_copies(
+book_id int,
+programme_id int,
+no_of_copies int,
+primary key(book_id,programme_id),
+foreign key(book_id)references book(Book_id) on delete cascade,
+foreign key(programme_id)references library_programme(programme_id) on delete cascade);
+desc book_copies;
 
-CREATE TABLE BOOK_AUTHORS
-(AUTHOR_NAME VARCHAR(20),
-BOOK_ID INTEGER,
-FOREIGN KEY (BOOK_ID) REFERENCES BOOK(BOOK_ID) ON DELETE CASCADE,
-PRIMARY KEY(BOOK_ID, AUTHOR_NAME));
+--creating book_lending table
+create table book_lending(
+book_id int,
+programme_id int,
+card_no varchar(10),
+date_out date,
+due_date date,
+primary key(book_id,programme_id,card_no),
+foreign key(book_id)references book(book_id)on delete cascade,
+foreign key(programme_id)references library_programme(programme_id)on delete cascade);
+desc book_lending;
 
-DESC BOOK_AUTHORS;
-
---Create Table LIBRARY_PROGRAMME with Primary Key as PROGRAMME_ID
-
-CREATE TABLE LIBRARY_PROGRAMME
-(PROGRAMME_ID INTEGER PRIMARY KEY,
-PROGRAMME_NAME VARCHAR(50),
-ADDRESS VARCHAR(50));
-
-DESC LIBRARY_PROGRAMME;
-
---Create Table as BOOK_COPIES with Primary Key as BOOK_ID and PROGRAMME_ID and Foreign Key BOOK_ID and PROGRAMME_ID referring the BOOK and LIBRARY_PROGRAMME tables respectively
-
-CREATE TABLE BOOK_COPIES
-(NO_OF_COPIES INTEGER,
-BOOK_ID INTEGER,
-PROGRAMME_ID INTEGER,
-FOREIGN KEY (BOOK_ID) REFERENCES BOOK(BOOK_ID) ON DELETE CASCADE,
-FOREIGN KEY(PROGRAMME_ID) REFERENCES LIBRARY_PROGRAMME(PROGRAMME_ID) ON DELETE CASCADE,
-PRIMARY KEY (BOOK_ID,PROGRAMME_ID));
-
-DESC BOOK_COPIES;
-
--- Create Table CARD with Primary Key as CARD_NO
-
-CREATE TABLE CARD
-(CARD_NO INTEGER PRIMARY KEY);
-
-DESC CARD;
-
--- Create Table BOOK_LENDING With Primary Key as BOOK_ID, PROGRAMME_ID and CARD_NO and Foreign key as BOOK_ID, PROGRAMME_ID and CARD_NO referring the BOOK, LIBRARY_PROGRAMME and CARD tables respectively
-
-CREATE TABLE BOOK_LENDING
-(BOOK_ID INTEGER,
-PROGRAMME_ID INTEGER,
-CARD_NO INTEGER,
-DATE_OUT DATE,
-DUE_DATE DATE,
-FOREIGN KEY (BOOK_ID) REFERENCES BOOK(BOOK_ID) ON DELETE CASCADE,
-FOREIGN KEY (PROGRAMME_ID) REFERENCES LIBRARY_PROGRAMME(PROGRAMME_ID) ON DELETE CASCADE,
-FOREIGN KEY (CARD_NO) REFERENCES CARD(CARD_NO) ON DELETE CASCADE,
-PRIMARY KEY (BOOK_ID,PROGRAMME_ID,CARD_NO));
-
-DESC BOOKLENDING;
 
 -----------------------------------------------------------------------------------------------------------------------------
 -- INSERT STATEMENTS -- 
---Inserting records into PUBLISHER table
 
-INSERT INTO PUBLISHER VALUES('SAPNA',912121212,'BANGALORE');
-INSERT INTO PUBLISHER VALUES('PENGUIN',921212121,'NEW YORK');
-INSERT INTO PUBLISHER VALUES('PEARSON',913131313,'HYDERABAD');
-INSERT INTO PUBLISHER VALUES('OZONE',931313131,'CHENNAI');
-INSERT INTO PUBLISHER VALUES('PLANETZ',914141414,'BANGALORE');
+--Inserting records in publisher table
+insert into publisher values('scholastic','london',6658564346);
+insert into publisher values('black swann','california',7658564346);
+insert into publisher values('pearson','london',7658564346);
+select * from publisher;
 
-SELECT * FROM PUBLISHER;
+-- Inserting records in book table
+insert into book values(001,'Sorceres Stones','scholastic',1997);
+insert into book values(002,'Chamber of Secrets','pearson',1997);
+insert into book values(003,'Prisoner of Azkaban','pearson',1999);
+insert into book values(004,'Goblet of fire','black swann',1999);
+insert into book values(005,'Order of Pheonix','black swann',2000);
+insert into book values(006,'Half Blood Prince','pearson',2000);
+insert into book values(007,'Deathly Hallows','scholastic',2001);
+insert into book values(008,'Deathly Hallows-2','scholastic',2002);
+select * from book;
 
---------------------------
+--Inserting record in book_author table
+insert into book_author values(001,'JK Rowling');
+insert into book_author values(002,'QW Rowling');
+insert into book_author values(003,'EW Rowling');
+insert into book_author values(004,'YU Rowling');
+insert into book_author values(005,'IO Rowling');
+insert into book_author values(006,'LK Rowling');
+insert into book_author values(007,'DF Rowling');
+insert into book_author values(008,'BV Rowling');
+select * from book_author;
 
---Inserting records into BOOK table
+--Inserting record in library_programme table
+insert into library_programme values(101,'Qudditch','Northumberland');
+insert into library_programme values(102,'Defenses','London');
+insert into library_programme values(103,'Potions','London');
+insert into library_programme values(104,'Flying','GodriC Hollow');
+insert into library_programme values(105,'Muggles','Diagon Alley');
+select * from library_programme;
 
-INSERT INTO BOOK VALUES(1,'BASICS OF EXCEL','JAN-2017','SAPNA');
-INSERT INTO BOOK VALUES(2,'PROGRAMMING MINDSET','JUN-2018','PLANETZ');
-INSERT INTO BOOK VALUES(3,'BASICS OF SQL','SEP-2016','PEARSON');
-INSERT INTO BOOK VALUES(4,'DBMS FOR BEGINNERS','SEP-2015','PLANETZ');
-INSERT INTO BOOK VALUES(5,'WEB SERVICES','MAY-2017','OZONE');
+-- Inserting record in book_copies table
+insert into book_copies values(1,101,10);
+insert into book_copies values(002,102,20);
+insert into book_copies values(003,103,30);
+insert into book_copies values(004,104,40);
+insert into book_copies values(005,105,50);
+insert into book_copies values(006,101,10);
+insert into book_copies values(007,102,20);
+insert into book_copies values(008,103,50);
+select * from book_copies;
 
-SELECT * FROM BOOK;
-
---------------------------
-
---Inserting records into BOOK_AUTHORS table
-
-INSERT INTO BOOK_AUTHORS VALUES('SRI DEVI',1);
-INSERT INTO BOOK_AUTHORS VALUES('DEEPAK',2);
-INSERT INTO BOOK_AUTHORS VALUES('PRAMOD',3);
-INSERT INTO BOOK_AUTHORS VALUES('SWATHI',4);
-INSERT INTO BOOK_AUTHORS VALUES('PRATHIMA',5);
-
-SELECT * FROM BOOK_AUTHORS;
-
-----------------------------
-
---Inserting records into LIBRARY_PROGRAMME table
-
-INSERT INTO LIBRARY_PROGRAMME VALUES(100,'HSR LAYOUT','BANGALORE');
-INSERT INTO LIBRARY_PROGRAMME VALUES(101,'KENGERI','BANGALORE');
-INSERT INTO LIBRARY_PROGRAMME VALUES(102,'BANASHANKARI','BANGALORE');
-INSERT INTO LIBRARY_PROGRAMME VALUES(103,'SHANKARA NAGAR','MANGALORE');
-INSERT INTO LIBRARY_PROGRAMME VALUES(104,'MANIPAL','UDUPI');
-
-SELECT * FROM LIBRARY_PROGRAMME;
-
--------------------------
-
---Inserting records into BOOK_COPIES table
-
-INSERT INTO BOOK_COPIES VALUES(10,1,100);
-INSERT INTO BOOK_COPIES VALUES(16,1,101);
-INSERT INTO BOOK_COPIES VALUES(20,2,102);
-INSERT INTO BOOK_COPIES VALUES(6,2,103);
-INSERT INTO BOOK_COPIES VALUES(4,3,104);
-INSERT INTO BOOK_COPIES VALUES(7,5,100);
-INSERT INTO BOOK_COPIES VALUES(3,4,101);
-
-SELECT * FROM BOOK_COPIES;
-
---------------------------
-
---Inserting records into BOOK_COPIES table
-
-INSERT INTO CARD VALUES(500);
-INSERT INTO CARD VALUES(501);
-INSERT INTO CARD VALUES(502);
-INSERT INTO CARD VALUES(503);
-INSERT INTO CARD VALUES(504);
-
-SELECT * FROM CARD;
-
---------------------------
-
---Inserting records into BOOK_LENDING table
-
-INSERT INTO BOOK_LENDING VALUES(1, 100, 501, '2017-01-01','2017-01-31');
-INSERT INTO BOOK_LENDING VALUES(3, 104, 501, '2017-01-11','2017-03-01');
-INSERT INTO BOOK_LENDING VALUES(2, 103, 501, '2017-02-21','2017-04-21');
-INSERT INTO BOOK_LENDING VALUES(4, 101, 501, '2017-03-11','2017-06-11');
-INSERT INTO BOOK_LENDING VALUES(1, 101, 504, '2017-04-09','2017-07-08');
-
-SELECT * FROM BOOK_LENDING;
+-- Inserting records in book_lending table
+insert into book_lending values(001,101,'A1','2017-01-01','2017-01-15');
+insert into book_lending values(002,101,'A1','2017-03-01','2017-03-15');
+insert into book_lending values(002,102,'A1','2017-02-01','2017-02-15');
+insert into book_lending values(002,103,'A1','2017-02-01','2017-02-15');
+insert into book_lending values(003,103,'B1','2017-04-01','2017-04-15');
+insert into book_lending values(005,105,'B1','2018-04-01','2018-04-15');
+insert into book_lending values(006,105,'C1','2019-05-01','2019-05-15');
+insert into book_lending values(007,103,'D1','2018-08-01','2018-08-15');
+select * from book_lending;
 
 -----------------------------------------------------------------------------------------------------------------------------
 -- Write SQL queries to
 
 -- 1. Retrieve details of all books in the library – id, title, name of publisher, authors, number of copies in each Programme, etc.
 
-SELECT B.BOOK_ID, B.TITLE, B.PUB_NAME, A.AUTHOR_NAME,C.NO_OF_COPIES,L.PROGRAMME_ID
-FROM BOOK B, BOOK_AUTHORS A, BOOK_COPIES C, LIBRARY_PROGRAMME L
-WHERE B.BOOK_ID=A.BOOK_ID
-AND B.BOOK_ID=C.BOOK_ID
-AND L.PROGRAMME_ID=C.PROGRAMME_ID;
+select b.*,a.author_name,c.no_of_copies 
+from book b,book_author a,book_copies c 
+where b.Book_id=a.book_id and b.Book_id=c.book_id;
 
 -- 2. Get the particulars of borrowers who have borrowed more than 3 books, but from Jan 2017 to Jun 2017.
 
-SELECT CARD_NO
-FROM BOOK_LENDING
-WHERE DATE_OUT BETWEEN '2017-01-01' AND '2017-06-01'
-GROUP BY CARD_NO
-HAVING COUNT(*)>3;
+select card_no 
+from book_lending 
+where date_out >="2017-01-01" and date_out<="2017-06-30" 
+group by card_no having count(*)>3;
 
 -- 3. Delete a book in BOOK table. Update the contents of other tables to reflect this data manipulation operation.
 
-DELETE FROM BOOK
-WHERE BOOK_ID=3; 
+delete from book where book_id=2;
 
-SELECT * FROM BOOK;
-SELECT * FROM BOOK_AUTHORS;
+select *from book_author;
+select *from book_lending;
+select *from book_copies;
 
 -- 4. Partition the BOOK table based on year of publication. Demonstrate its working with a simple query.
 
-CREATE VIEW V_PUBLICATION AS SELECT
-PUB_YEAR
-FROM BOOK; 
+create table book1( 
+book_id int ,
+title varchar(20),
+publisher_name varchar(20),
+pub_year year,
+primary key(book_id,pub_year));
+desc book1;
 
-SELECT * FROM V_PUBLICATION;
+insert into book1 values(001,'Sorceres Stones','scholastic',1997);
+insert into book1 values(002,'Chamber of Secrets','pearson',1997);
+insert into book1 values(003,'Prisoner of Azkaban','pearson',1999);
+insert into book1 values(004,'Goblet of fire','black swann',1999);
+insert into book1 values(005,'Order of Pheonix','black swann',2000);
+insert into book1 values(006,'Half Blood Prince','pearson',2000);
+insert into book1 values(007,'Deathly Hallows','scholastic',2001);
+insert into book1 values(008,'Deathly Hallows-2','scholastic',2002);
+select * from book1;
 
+alter table book1 partition by range(pub_year)
+	(partition p0 values less than(1999),
+	partition p1 values less than(2002),
+	partition p2 values less than maxvalue);
+
+select partition_name,table_rows from information_schema.partitions where table_name="book1";
 
 -- 5. Create a view of all books and its number of copies that are currently available in the Library.
 
-CREATE VIEW V_BOOKS AS
-SELECT B.BOOK_ID, B.TITLE, C.NO_OF_COPIES
-FROM
-BOOK B, BOOK_COPIES C, LIBRARY_PROGRAMME L
-WHERE B.BOOK_ID=C.BOOK_ID
-AND C.PROGRAMME_ID=L.PROGRAMME_ID;
+create view total_books as select Book_id,sum(no_of_copies) as sum from book_copies group by Book_id;
+select * from total_books;
 
-SELECT * FROM V_BOOKS;
+create view books_borrowed as select Book_id,count(*) as sum from book_lending group by Book_id;
+select * from books_borrowed;
+
+select a.Book_id,ifnull(a.sum-b.sum,a.sum) as books_available 
+from total_books a left outer join books_borrowed b on a.Book_id=b.Book_id;
 
 ----------------------------------------------------------------------------------------------------------------------------
